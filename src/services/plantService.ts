@@ -27,8 +27,15 @@ export const plantService = {
     // Add a new plant
     addPlant: async (plant: Omit<Plant, 'id' | 'createdAt'>) => {
         try {
-            const docRef = await addDoc(collection(db, COLLECTION_NAME), {
+            const cleanedPlant = {
                 ...plant,
+                name: (plant.name || '').trim(),
+                categoryId: (plant.categoryId || '').trim(),
+                variety: (plant.variety || '').trim(),
+                groupId: (plant.groupId || '').trim(),
+            };
+            const docRef = await addDoc(collection(db, COLLECTION_NAME), {
+                ...cleanedPlant,
                 createdAt: Timestamp.now(),
             });
             return docRef.id;
@@ -53,8 +60,14 @@ export const plantService = {
     // Update a plant
     updatePlant: async (id: string, plant: Partial<Plant>) => {
         try {
+            const cleanedPlant: Partial<Plant> = { ...plant };
+            if (plant.name !== undefined) cleanedPlant.name = plant.name.trim();
+            if (plant.categoryId !== undefined) cleanedPlant.categoryId = plant.categoryId.trim();
+            if (plant.variety !== undefined) cleanedPlant.variety = plant.variety.trim();
+            if (plant.groupId !== undefined) cleanedPlant.groupId = plant.groupId.trim();
+
             const docRef = doc(db, COLLECTION_NAME, id);
-            await updateDoc(docRef, plant);
+            await updateDoc(docRef, cleanedPlant);
         } catch (error) {
             console.error('Error updating plant:', error);
             throw error;

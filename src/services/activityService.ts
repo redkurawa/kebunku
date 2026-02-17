@@ -20,7 +20,8 @@ export type ActivityType =
   | 'semai'
   | 'hama_penyakit'
   | 'panen_lainnya'
-  | 'pisah_anakan';
+  | 'pisah_anakan'
+  | 'lainnya';
 
 export type WeatherCondition =
   | 'mendung'
@@ -68,8 +69,18 @@ export const activityService = {
   addActivity: async (activity: Omit<Activity, 'id' | 'createdAt'>) => {
     console.log('Service: addActivity starting...', activity.type);
     try {
-      const addPromise = addDoc(collection(db, COLLECTION_NAME), {
+      const cleanedActivity = {
         ...activity,
+        description: (activity.description || '').trim(),
+        productName: (activity.productName || '').trim(),
+        dosis: (activity.dosis || '').trim(),
+        volume: (activity.volume || '').trim(),
+        method: (activity.method || '').trim(),
+        targetValue: (activity.targetValue || '').trim(),
+      };
+
+      const addPromise = addDoc(collection(db, COLLECTION_NAME), {
+        ...cleanedActivity,
         createdAt: Timestamp.now(),
       });
 
