@@ -36,13 +36,13 @@
 
 Kebanyakan aplikasi taman terasa **kuno, berantakan, dan tidak intuitif**. Kami hadir untuk mengubahnya:
 
-| Masalah Biasa                   | Solusi KebunKU                                 |
-| :------------------------------ | :--------------------------------------------- |
-| 📋 Catatan kertas yang hilang   | ☁️ Backup cloud otomatis dengan Firestore      |
-| 🔍 Susah cari data tanaman lama | 🔎 Sistem filter canggih di timeline           |
-| 🎨 Tampilan monoton             | 🎭 4 tema berbeda (Orange, Teal, Slate, Stone) |
-| 📷 Foto tidak tertata           | 🖼️ Integrasi Cloudinary untuk foto HD          |
-| 📱 Tidak responsif              | 📐 Layout simetris 800px yang elegan           |
+| Masalah Biasa                   | Solusi KebunKU                                     |
+| :------------------------------ | :------------------------------------------------- |
+| 📋 Catatan kertas yang hilang   | ☁️ Backup cloud otomatis dengan Firestore          |
+| 🔍 Susah cari data tanaman lama | 🔎 Sistem filter canggih di timeline               |
+| 🎨 Tampilan monoton             | 🎭 4 tema berbeda (Orange, Teal, Slate, Stone)     |
+| 📷 Foto tidak tertata           | 🖼️ Upload **multiple** foto sekaligus via Cloudinary |
+| 📱 Tidak responsif              | 📐 Layout simetris & responsive (Equal-Width Tabs) |
 
 </td>
 </tr>
@@ -82,8 +82,10 @@ Kebanyakan aplikasi taman terasa **kuno, berantakan, dan tidak intuitif**. Kami 
 ```
 
 - **Fixed-Width Precision**: Container utama **800px** yang ketat menghindari pergeseran layout, memberikan nuansa "majalah" yang stabil
+- **Equal-Width Tabs**: Menu navigasi "+ Catat", "Riwayat", dan "Tanaman" memiliki lebar yang sama pada desktop, menciptakan alignment yang sempurna.
 - **Dynamic Tabs**: Pindah instan antara **Catat** (Recording), **Riwayat** (History), dan **Tanaman** (Collection) tanpa lompatan visual
 - **Standardized Padding**: Spacing card internal 1.5rem yang seragam menciptakan alignment matematika sempurna di semua komponen UI
+- **Mobile First**: Tombol aksi (seperti "Tambah Tanaman") secara cerdas berpindah ke bawah judul pada mobile view untuk menghemat ruang.
 
 ### 🪴 Koleksi Tanaman Cerdas
 
@@ -112,13 +114,14 @@ Kebanyakan aplikasi taman terasa **kuno, berantakan, dan tidak intuitif**. Kami 
 - **Hierarchical Organization**: Urutkan taman Anda berdasarkan **Kelompok** (mis. Buah), **Kategori** (mis. Mangga), dan **Varietas** (mis. Arumanis)
 - **Edit & Purge**: Kapabilitas CRUD penuh untuk mengubah nama varietas atau menghapus tanaman yang sudah tidak aktif
 - **Quick Discovery**: Grup yang dapat diciutkan memungkinkan Anda menavigasi koleksi tanaman terbesar dengan mudah
+- **No-Scroll Mobile UI**: Mengganti tabel dengan sistem kartu (card-based), memastikan tidak ada scrollbar horizontal yang mengganggu di HP.
 
 ### 📝 Logging Aktivitas Profesional
 
 - **Smart Forms**: Input yang beradaptasi berdasarkan jenis aktivitas (mis. menampilkan Dosage/Volume hanya untuk treatment)
 - **New Types**: Dukungan untuk aksi khusus seperti **"Tanaman Baru"** dan **"Pisah Anakan"**
 - **Iconic Selection**: Dropdown yang diperkaya emoji untuk identifikasi tugas yang cepat dan visual
-- **Photo Monitoring**: Terintegrasi dengan **Cloudinary** untuk tracking visual definisi tinggi dari kemajuan taman Anda
+- **Multi-Photo Monitoring**: Upload banyak foto sekaligus dalam satu aktivitas. Foto ditampilkan dalam grid yang indah di timeline.
 
 ### 🔍 Filter Timeline yang Powerful
 
@@ -156,6 +159,87 @@ Kebanyakan aplikasi taman terasa **kuno, berantakan, dan tidak intuitif**. Kami 
 |     ![Login](https://placehold.co/400x300/6ee7b7/white?text=Login+Page)     |   ![Form](https://placehold.co/400x300/047857/white?text=Add+Plant+Form)   |  ![Mobile](https://placehold.co/400x300/065f46/white?text=Mobile+Responsive)  |
 
 </div>
+
+> **📌 Catatan Screenshot**: Saat ini menampilkan placeholder. Ganti dengan screenshot asli setelah diambil!
+
+---
+
+### 📷 Cara Mengambil Screenshot
+
+Ikuti langkah berikut untuk membuat screenshot yang profesional:
+
+#### 1. Screenshot dengan Snipping Tool (Windows)
+
+| Tombol            | Aksi                                                 |
+| :---------------- | :--------------------------------------------------- |
+| `Win + Shift + S` | Buka Snipping Tool, pilih area yang ingin di-capture |
+| `Win + PrtScn`    | Langsung simpan full screen ke folder Screenshots    |
+
+#### 2. Screenshot dengan VS Code
+
+```bash
+# Menggunakan command palette
+Ctrl + Shift + P -> "Screenshot"
+# Atau gunakan ekstensi seperti "Screenshot" atau "Polacode"
+```
+
+#### 3. Upload ke GitHub
+
+```bash
+#Cara 1: Upload langsung di GitHub
+1. Buka repository di github.com
+2. Buka folder /docs atau /assets
+3. Drag & drop file gambar
+4. Copy URL hasil upload
+
+#Cara 2: Gunakan imgbb.com (Gratis, mudah)
+1. Buka https://imgbb.com
+2. Upload screenshot
+3. Copy direct link
+```
+
+#### 4. Format yang Disarankan
+
+| Spesifikasi   | Nilai                                              |
+| :------------ | :------------------------------------------------- |
+| **Format**    | PNG atau JPG                                       |
+| **Ukuran**    | 400x300 pixel (untuk tabel di atas)                |
+| **Quality**   | 80-90% untuk balance kualitas & ukuran             |
+| **Nama file** | `dashboard.png`, `plants.png`, `timeline.png`, dll |
+
+#### 5. Ganti URL di README
+
+Setelah upload, ganti link placeholder dengan link asli:
+
+```markdown
+# Sebelum (placeholder):
+
+![Dashboard](https://placehold.co/400x300/10b981/white?text=Dashboard+View)
+
+# Sesudah (screenshot asli):
+
+![Dashboard](/docs/screenshots/dashboard.png)
+
+# atau
+
+![Dashboard](https://i.imgbb.com/xxxxx/dashboard.png)
+```
+
+---
+
+### 🎯 Screenshot yang Diperlukan
+
+Berikut list screenshot yang perlu Anda ambil untuk melengkapi README:
+
+| No  | Halaman                     | Deskripsi                                   | Nama File               |
+| :-- | :-------------------------- | :------------------------------------------ | :---------------------- |
+| 1   | **Login Page**              | Tampilan halaman login dengan tombol Google | `login.png`             |
+| 2   | **Dashboard - Tab Catat**   | Form input aktivitas tanaman                | `dashboard-catat.png`   |
+| 3   | **Dashboard - Tab Riwayat** | Timeline aktivitas dengan filter            | `dashboard-riwayat.png` |
+| 4   | **Dashboard - Tab Tanaman** | Koleksi tanaman tersusun                    | `dashboard-tanaman.png` |
+| 5   | **Plant Form**              | Form tambah/edit tanaman                    | `plant-form.png`        |
+| 6   | **Mobile View**             | Tampilan responsive di HP                   | `mobile-view.png`       |
+| 7   | **Theme Selection**         | Contoh tema berbeda (Teal/Slate)            | `theme-example.png`     |
 
 ---
 
