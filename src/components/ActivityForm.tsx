@@ -21,6 +21,7 @@ const ACTIVITY_TYPES: { value: ActivityType; label: string }[] = [
   { value: 'hama_penyakit', label: '⚠️ Hama/Penyakit' },
   { value: 'panen_lainnya', label: '🧺 Panen/Lainnya' },
   { value: 'pisah_anakan', label: '🪴 Pisah Anakan' },
+  { value: 'lainnya', label: '📝 Lainnya' },
 ];
 
 const METHODS = ['spray', 'kocor', 'tabur', 'tanam', 'lainnya'];
@@ -60,11 +61,27 @@ const ActivityForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   });
 
   const categories = useMemo(() => {
-    return Array.from(new Set(plants.map((p) => p.categoryId))).sort();
+    const raw = plants.map((p) => (p.categoryId || '').trim()).filter(Boolean);
+    const unique = new Map<string, string>();
+    raw.forEach((cat) => {
+      const lower = cat.toLowerCase();
+      if (!unique.has(lower)) {
+        unique.set(lower, cat);
+      }
+    });
+    return Array.from(unique.values()).sort((a, b) => a.localeCompare(b));
   }, [plants]);
 
   const groups = useMemo(() => {
-    return Array.from(new Set(plants.map((p) => p.groupId))).sort();
+    const raw = plants.map((p) => (p.groupId || '').trim()).filter(Boolean);
+    const unique = new Map<string, string>();
+    raw.forEach((grp) => {
+      const lower = grp.toLowerCase();
+      if (!unique.has(lower)) {
+        unique.set(lower, grp);
+      }
+    });
+    return Array.from(unique.values()).sort((a, b) => a.localeCompare(b));
   }, [plants]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -94,13 +111,22 @@ const ActivityForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
 
   const saveActivity = async (finalPhotoUrls: string[] = []) => {
     const activityDate = new Date(formData.date);
-    await addActivity({
+
+    // Clean up data based on activity type
+    const isTreatment = ['pupuk', 'fungisida', 'insektisida'].includes(formData.type);
+    const cleanedData = {
       ...formData,
+      productName: isTreatment ? formData.productName : '',
+      dosis: isTreatment ? formData.dosis : '',
+      volume: isTreatment ? formData.volume : '',
+      method: isTreatment ? formData.method : '',
       photoUrls: finalPhotoUrls,
       // For backward compatibility if needed:
       photoUrl: finalPhotoUrls.length > 0 ? finalPhotoUrls[0] : '',
       date: Timestamp.fromDate(activityDate),
-    });
+    };
+
+    await addActivity(cleanedData);
 
     setFormData({
       ...formData,

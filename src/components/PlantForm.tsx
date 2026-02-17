@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { usePlants } from '../hooks/usePlants';
 import { Plus, X, Save } from 'lucide-react';
 import { type Plant } from '../services/plantService';
@@ -9,7 +9,7 @@ interface PlantFormProps {
 }
 
 const PlantForm: React.FC<PlantFormProps> = ({ onCancel, initialData }) => {
-  const { addPlant, updatePlant } = usePlants();
+  const { addPlant, updatePlant, plants } = usePlants();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -17,6 +17,23 @@ const PlantForm: React.FC<PlantFormProps> = ({ onCancel, initialData }) => {
     categoryId: '',
     variety: '',
   });
+
+  const existingCategories = useMemo(() => {
+    const categories = plants
+      .filter((p) => p.groupId === formData.groupId && p.categoryId)
+      .map((p) => p.categoryId.trim());
+
+    // Case-insensitive deduplication
+    const unique = new Map<string, string>();
+    categories.forEach((cat) => {
+      const lower = cat.toLowerCase();
+      if (!unique.has(lower)) {
+        unique.set(lower, cat);
+      }
+    });
+
+    return Array.from(unique.values()).sort((a, b) => a.localeCompare(b));
+  }, [plants, formData.groupId]);
 
   useEffect(() => {
     if (initialData) {
@@ -31,14 +48,24 @@ const PlantForm: React.FC<PlantFormProps> = ({ onCancel, initialData }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.categoryId || !formData.variety) return;
+    const trimmedCategory = formData.categoryId.trim();
+    const trimmedVariety = formData.variety.trim();
+
+    if (!trimmedCategory || !trimmedVariety) return;
 
     setLoading(true);
     try {
+      const finalData = {
+        ...formData,
+        categoryId: trimmedCategory,
+        variety: trimmedVariety,
+        name: formData.name.trim(),
+      };
+
       if (initialData?.id) {
-        await updatePlant(initialData.id, formData);
+        await updatePlant(initialData.id, finalData);
       } else {
-        await addPlant(formData);
+        await addPlant(finalData);
       }
       setFormData({ name: '', groupId: 'buah', categoryId: '', variety: '' });
       if (onCancel) onCancel();
@@ -108,8 +135,14 @@ const PlantForm: React.FC<PlantFormProps> = ({ onCancel, initialData }) => {
             onChange={(e) =>
               setFormData({ ...formData, categoryId: e.target.value })
             }
+            list='category-suggestions'
             required
           />
+          <datalist id='category-suggestions'>
+            {existingCategories.map((cat: string) => (
+              <option key={cat} value={cat} />
+            ))}
+          </datalist>
         </div>
         <div className='input-group'>
           <label>Jenis/Varietas (e.g. Jupiter)</label>

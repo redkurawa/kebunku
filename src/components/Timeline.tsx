@@ -44,6 +44,7 @@ const ACTIVITY_ICONS: Record<string, LucideIcon> = {
   hama_penyakit: Bug,
   panen_lainnya: Grape,
   pisah_anakan: GitBranch,
+  lainnya: ClipboardList,
 };
 
 const ALL_ACTIVITY_TYPES = [
@@ -58,6 +59,7 @@ const ALL_ACTIVITY_TYPES = [
   { value: 'hama_penyakit', label: 'Hama/Penyakit', icon: Bug },
   { value: 'panen_lainnya', label: 'Panen/Lainnya', icon: Grape },
   { value: 'pisah_anakan', label: 'Pisah Anakan', icon: GitBranch },
+  { value: 'lainnya', label: 'Lainnya', icon: ClipboardList },
 ];
 
 const Timeline: React.FC = () => {
@@ -434,35 +436,39 @@ const Timeline: React.FC = () => {
                   </div>
                 )}
 
-                {(activity.dosis || activity.volume || activity.method) && (
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: '0.75rem',
-                      fontSize: '0.8125rem',
-                      backgroundColor: 'var(--neutral-100)',
-                      padding: '0.5rem 0.75rem',
-                      borderRadius: 'var(--radius-sm)',
-                      width: 'fit-content',
-                    }}
-                  >
-                    {activity.dosis && (
-                      <span>
-                        <strong>Dosis:</strong> {activity.dosis}
-                      </span>
+                {['pupuk', 'fungisida', 'insektisida'].includes(activity.type) && (
+                  <>
+                    {(activity.dosis || activity.volume || activity.method) && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          gap: '0.75rem',
+                          fontSize: '0.8125rem',
+                          backgroundColor: 'var(--neutral-100)',
+                          padding: '0.5rem 0.75rem',
+                          borderRadius: 'var(--radius-sm)',
+                          width: 'fit-content',
+                        }}
+                      >
+                        {activity.dosis && (
+                          <span>
+                            <strong>Dosis:</strong> {activity.dosis}
+                          </span>
+                        )}
+                        {activity.volume && (
+                          <span>
+                            <strong>Volume:</strong> {activity.volume}
+                          </span>
+                        )}
+                        {activity.method && (
+                          <span style={{ textTransform: 'capitalize' }}>
+                            <strong>Metode:</strong> {activity.method}
+                          </span>
+                        )}
+                      </div>
                     )}
-                    {activity.volume && (
-                      <span>
-                        <strong>Volume:</strong> {activity.volume}
-                      </span>
-                    )}
-                    {activity.method && (
-                      <span style={{ textTransform: 'capitalize' }}>
-                        <strong>Metode:</strong> {activity.method}
-                      </span>
-                    )}
-                  </div>
+                  </>
                 )}
               </div>
             </div>

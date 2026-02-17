@@ -119,9 +119,10 @@ Kebanyakan aplikasi taman terasa **kuno, berantakan, dan tidak intuitif**. Kami 
 ### 📝 Logging Aktivitas Profesional
 
 - **Smart Forms**: Input yang beradaptasi berdasarkan jenis aktivitas (mis. menampilkan Dosage/Volume hanya untuk treatment)
-- **New Types**: Dukungan untuk aksi khusus seperti **"Tanaman Baru"** dan **"Pisah Anakan"**
-- **Iconic Selection**: Dropdown yang diperkaya emoji untuk identifikasi tugas yang cepat dan visual
-- **Multi-Photo Monitoring**: Upload banyak foto sekaligus dalam satu aktivitas. Foto ditampilkan dalam grid yang indah di timeline.
+- **New Types**: Dukungan untuk aksi khusus seperti **"Tanaman Baru"**, **"Pisah Anakan"**, dan **"Lainnya"**
+- **Data Integrity**: Sistem **Auto-Trim** dan **Case-Insensitive Deduplication** memastikan data kategori dan varietas tetap bersih dan konsisten tanpa duplikat yang mengganggu.
+- **Improved UX**: Saran kategori otomatis (datalist) saat menambah tanaman baru berdasarkan grup yang dipilih.
+- **Multi-Photo Monitoring**: Upload banyak foto sekaligus dalam satu aktivitas via Cloudinary. Foto ditampilkan dalam grid yang indah di timeline.
 
 ### 🔍 Filter Timeline yang Powerful
 
