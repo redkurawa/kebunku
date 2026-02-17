@@ -198,12 +198,31 @@
             margin-top: 2rem;
             transition: var(--transition);
             box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4);
+            animation: pulse 2s infinite;
         }
 
         .btn:hover {
             background: var(--primary-dark);
             box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.5);
             transform: scale(1.05);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
         }
 
         @media (max-width: 768px) {
