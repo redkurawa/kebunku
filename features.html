@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KebunKU - Fitur & Keunggulan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --primary-light: #d1fae5;
+            --secondary: #1e293b;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --bg-body: #f8fafc;
+            --white: #ffffff;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --radius: 1.5rem;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: var(--white);
+            padding: 6rem 1rem 10rem;
+            text-align: center;
+            position: relative;
+            clip-path: ellipse(150% 100% at 50% 0%);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.025em;
+        }
+
+        .hero-desc {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        /* Main Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin-top: -6rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+
+        .detail-list {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .detail-list li {
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .detail-list li::before {
+            content: '✓';
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Specialized Sections */
+        .section-title {
+            text-align: center;
+            margin: 6rem 0 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .tag {
+            background: var(--white);
+            padding: 0.5rem 1.25rem;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            border: 1px solid var(--primary-light);
+            color: var(--primary-dark);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 8rem;
+            background: var(--secondary);
+            color: var(--white);
+            padding: 4rem 1rem;
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--white);
+            padding: 1rem 2.5rem;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+            margin-top: 2rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.5);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .features-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>🌿 KebunKU</h1>
+            <p class="hero-desc">Digital Garden Diary yang didesain secara presisi untuk membantu Anda merekam, melacak, dan merawat taman impian dengan teknologi mutakhir.</p>
+            <a href="https://kebunku.vercel.app" class="btn">Buka Aplikasi</a>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <div class="features-grid">
+            <!-- Feature 1 -->
+            <div class="feature-card">
+                <div class="icon">🪴</div>
+                <h2>Manajemen Tanaman</h2>
+                <p>Organisasi taman secara profesional dengan struktur hirarki yang rapi.</p>
+                <ul class="detail-list">
+                    <li>Struktur: Kelompok → Kategori → Varietas</li>
+                    <li>Saran Kategori Otomatis (Datalist Cerdas)</li>
+                    <li>Filter Berbasis Kelompok (Buah, Bunga, dll)</li>
+                    <li>CRUD Penuh (Tambah/Ubah/Hapus Tanaman)</li>
+                </ul>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="feature-card">
+                <div class="icon">📝</div>
+                <h2>Logging Aktivitas</h2>
+                <p>Catat setiap tindakan perawatan dengan presisi tinggi dan form yang adaptif.</p>
+                <ul class="detail-list">
+                    <li>Form Adaptif berdasarkan Jenis Aktivitas</li>
+                    <li>Support Aktivitas Bulk (Per Kategori/Kelompok)</li>
+                    <li>Jenis: Pupuk, Fungisida, Insektisida, Monitor</li>
+                    <li>Jenis Khusus: Tanaman Baru, Pisah Anakan, Lainnya</li>
+                </ul>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="feature-card">
+                <div class="icon">🖼️</div>
+                <h2>Monitoring Visual</h2>
+                <p>Pantau pertumbuhan setiap tanaman melalui riwayat foto yang terorganisir.</p>
+                <ul class="detail-list">
+                    <li>Upload Multiple Foto dalam satu aktivitas</li>
+                    <li>Integrasi Cloudinary CDN yang super cepat</li>
+                    <li>Full-screen Image Viewer</li>
+                    <li>Grid Foto yang indah di Timeline</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-title">
+            <h2>Kualitas Data & UX</h2>
+            <p>Dibangun dengan fokus pada kebersihan data dan kenyamanan pengguna.</p>
+        </div>
+
+        <div class="features-grid">
+            <!-- Feature 4 -->
+            <div class="feature-card">
+                <div class="icon">💎</div>
+                <h2>Data Integrity</h2>
+                <p>Data Anda selalu bersih dan konsisten berkat sistem otomatis kaimi.</p>
+                <ul class="detail-list">
+                    <li><b>Auto-Trim</b> otomatis hapus spasi berlebih</li>
+                    <li><b>Deduplikasi Cerdas</b> cegah kategori ganda</li>
+                    <li>Normalisasi Case-Insensitive di Database</li>
+                    <li>Pembersihan data di layer Cloud (Firestore)</li>
+                </ul>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="feature-card">
+                <div class="icon">🎭</div>
+                <h2>UI/UX Modern</h2>
+                <p>Tampilan premium yang stabil dan nyaman untuk mata Anda.</p>
+                <ul class="detail-list">
+                    <li>Magazine Layout (Fixed 800px Container)</li>
+                    <li>Quad-Theme (Emerald, Teal, Slate, Stone)</li>
+                    <li>Responsive: Mobile, Tablet, & Desktop</li>
+                    <li>Real-time Update dengan Firestore Subscription</li>
+                </ul>
+            </div>
+
+            <!-- Feature 6 -->
+            <div class="feature-card">
+                <div class="icon">🛡️</div>
+                <h2>Keamanan & Cloud</h2>
+                <p>Data tersimpan aman dan tersinkronisasi di semua perangkat Anda.</p>
+                <ul class="detail-list">
+                    <li>Google Login via Firebase Auth</li>
+                    <li>Sinkronisasi Cloud Real-time 24/7</li>
+                    <li>Protected Routes & Secure Firestore Rules</li>
+                    <li>Backup otomatis oleh infrastruktur Google</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-title">
+            <h2>Modern Tech Stack</h2>
+            <div class="tech-tags">
+                <span class="tag">Vite</span>
+                <span class="tag">React 18</span>
+                <span class="tag">TypeScript</span>
+                <span class="tag">Firebase Firestore</span>
+                <span class="tag">Firebase Auth</span>
+                <span class="tag">Cloudinary</span>
+                <span class="tag">Lucide Icons</span>
+                <span class="tag">Vanilla CSS</span>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 KebunKU. Dibuat dengan &hearts; untuk gardener modern.</p>
+            <p style="font-size: 0.8rem; margin-top: 1rem; opacity: 0.6;">redkurawa/kebunku</p>
+        </div>
+    </footer>
+
+</body>
+</html>
