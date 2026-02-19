@@ -20,8 +20,6 @@ import {
   PlusCircle,
   Scissors,
   Grape,
-  GitBranch,
-  ArrowRight,
   TreeDeciduous,
   Package,
   ClipboardList,
