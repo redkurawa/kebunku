@@ -8,23 +8,80 @@ import {
   type WeatherCondition,
   activityService,
 } from '../services/activityService';
-import { Sprout, Loader2, Image as ImageIcon, X, Save } from 'lucide-react';
+import {
+  Sprout,
+  Loader2,
+  Image as ImageIcon,
+  X,
+  Save,
+  Bug,
+  Beaker,
+  Eye,
+  PlusCircle,
+  Scissors,
+  Grape,
+  GitBranch,
+  ArrowRight,
+  TreeDeciduous,
+  Package,
+  ClipboardList,
+  AlertCircle,
+} from 'lucide-react';
 
-const ACTIVITY_TYPES: { value: ActivityType; label: string }[] = [
-  { value: 'pupuk', label: '🧪 Pupuk' },
-  { value: 'fungisida', label: '🛡️ Fungsida' },
-  { value: 'insektisida', label: '🪲 Insectisida' },
-  { value: 'monitor', label: '👁️ Monitor' },
-  { value: 'new_comer', label: '🆕 Tanaman Baru' },
-  { value: 'pangkas', label: '✂️ Pangkas' },
-  { value: 'semai', label: '🌱 Semai' },
-  { value: 'hama_penyakit', label: '⚠️ Hama/Penyakit' },
-  { value: 'panen_lainnya', label: '🧺 Panen/Lainnya' },
-  { value: 'pisah_anakan', label: '🪴 Pisah Anakan' },
-  { value: 'lainnya', label: '📝 Lainnya' },
+const ACTIVITY_TYPES: {
+  value: ActivityType;
+  label: string;
+  icon: React.ReactNode;
+}[] = [
+  { value: 'pupuk', label: '🧪 Pupuk', icon: <Sprout size={16} /> },
+  { value: 'fungisida', label: '🧪 Fungsida', icon: <Beaker size={16} /> },
+  { value: 'insektisida', label: '🦟 Insectisida', icon: <Bug size={16} /> },
+  { value: 'monitor', label: '👁️ Monitor', icon: <Eye size={16} /> },
+  {
+    value: 'new_comer',
+    label: '🆕 Tanaman Baru',
+    icon: <PlusCircle size={16} />,
+  },
+  { value: 'pangkas', label: '✂️ Pangkas', icon: <Scissors size={16} /> },
+  { value: 'semai', label: '🌱 Semai', icon: <Sprout size={16} /> },
+  {
+    value: 'hama_penyakit',
+    label: '⚠️ Hama/Penyakit',
+    icon: <AlertCircle size={16} />,
+  },
+  {
+    value: 'panen_lainnya',
+    label: '🧺 Panen/Lainnya',
+    icon: <Grape size={16} />,
+  },
+  {
+    value: 'pisah_anakan',
+    label: '⛄ Pisah Anakan',
+    icon: <TreeDeciduous size={16} />,
+  },
+  { value: 'pindah_pot', label: '📦 Pindah Pot', icon: <Package size={16} /> },
+  { value: 'lainnya', label: '📝 Lainnya', icon: <ClipboardList size={16} /> },
 ];
 
 const METHODS = ['spray', 'kocor', 'tabur', 'tanam', 'lainnya'];
+
+// Helper function to transform dose/volume values
+const transformDosisVolume = (value: string): string => {
+  if (!value) return value;
+
+  let result = value.trim();
+
+  // Transform dose: g/l -> gr/ltr
+  result = result.replace(/g\/l/gi, 'gr/ltr');
+  // Transform dose: m/l -> ml/ltr (milliliter per liter)
+  result = result.replace(/m\/l/gi, 'ml/ltr');
+  // Transform volume: 5 l -> 5 ltr (standalone l at end of word/number)
+  result = result.replace(/(\d+)\s*l(?!t|\w)/gi, '$1 ltr');
+  // Transform dose: 10g -> 10 gram (standalone g at end)
+  result = result.replace(/(\d+)\s*g(?!r|\w)/gi, '$1 gram');
+
+  return result;
+};
 
 const WEATHER_CONDITIONS: { value: WeatherCondition; label: string }[] = [
   { value: 'cerah', label: 'Cerah' },
@@ -113,12 +170,14 @@ const ActivityForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
     const activityDate = new Date(formData.date);
 
     // Clean up data based on activity type
-    const isTreatment = ['pupuk', 'fungisida', 'insektisida'].includes(formData.type);
+    const isTreatment = ['pupuk', 'fungisida', 'insektisida'].includes(
+      formData.type
+    );
     const cleanedData = {
       ...formData,
       productName: isTreatment ? formData.productName : '',
-      dosis: isTreatment ? formData.dosis : '',
-      volume: isTreatment ? formData.volume : '',
+      dosis: isTreatment ? transformDosisVolume(formData.dosis) : '',
+      volume: isTreatment ? transformDosisVolume(formData.volume) : '',
       method: isTreatment ? formData.method : '',
       photoUrls: finalPhotoUrls,
       // For backward compatibility if needed:
@@ -155,7 +214,7 @@ const ActivityForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
 
     setLoading(true);
     try {
-      let photoUrls: string[] = [];
+      const photoUrls: string[] = [];
       if (selectedFiles.length > 0 && user) {
         setIsUploading(true);
         try {
@@ -167,7 +226,8 @@ const ActivityForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
               file,
               (prog) => {
                 // Approximate overall progress
-                const overallProg = ((i + prog / 100) / selectedFiles.length) * 100;
+                const overallProg =
+                  ((i + prog / 100) / selectedFiles.length) * 100;
                 setUploadProgress(Math.round(overallProg));
               }
             );

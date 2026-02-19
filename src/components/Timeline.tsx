@@ -22,6 +22,8 @@ import {
   Maximize2,
   X,
   GitBranch,
+  ChevronLeft,
+  ChevronRight,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -67,11 +69,25 @@ const Timeline: React.FC = () => {
   const { plants } = usePlants();
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
 
   const filteredActivities = useMemo(() => {
     if (activeFilter === 'all') return activities;
     return activities.filter((a) => a.type === activeFilter);
   }, [activities, activeFilter]);
+
+  // Reset page when filter changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredActivities.length / ITEMS_PER_PAGE);
+  const paginatedActivities = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredActivities.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredActivities, currentPage]);
 
   const getPlantInfo = (plantId: string) => {
     return plants.find((p) => p.id === plantId);
@@ -201,7 +217,7 @@ const Timeline: React.FC = () => {
           </p>
         </div>
       ) : (
-        filteredActivities.map((activity) => {
+        paginatedActivities.map((activity) => {
           const plant =
             activity.targetScope === 'variety'
               ? getPlantInfo(activity.plantId)
@@ -349,7 +365,8 @@ const Timeline: React.FC = () => {
                   <div
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+                      gridTemplateColumns:
+                        'repeat(auto-fill, minmax(140px, 1fr))',
                       gap: '0.75rem',
                       marginTop: '0.75rem',
                       marginBottom: '1rem',
@@ -436,7 +453,9 @@ const Timeline: React.FC = () => {
                   </div>
                 )}
 
-                {['pupuk', 'fungisida', 'insektisida'].includes(activity.type) && (
+                {['pupuk', 'fungisida', 'insektisida'].includes(
+                  activity.type
+                ) && (
                   <>
                     {(activity.dosis || activity.volume || activity.method) && (
                       <div
@@ -515,6 +534,68 @@ const Timeline: React.FC = () => {
               objectFit: 'contain',
             }}
           />
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '1rem',
+            marginTop: '1rem',
+            padding: '1rem',
+          }}
+        >
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            style={{
+              padding: '0.5rem 1rem',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-color)',
+              backgroundColor:
+                currentPage === 1 ? 'var(--neutral-100)' : 'white',
+              color:
+                currentPage === 1
+                  ? 'var(--neutral-400)'
+                  : 'var(--text-primary)',
+              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+            }}
+          >
+            <ChevronLeft size={18} />
+            Prev
+          </button>
+          <span style={{ fontSize: '0.875rem', color: 'var(--neutral-500)' }}>
+            Halaman {currentPage} dari {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            style={{
+              padding: '0.5rem 1rem',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-color)',
+              backgroundColor:
+                currentPage === totalPages ? 'var(--neutral-100)' : 'white',
+              color:
+                currentPage === totalPages
+                  ? 'var(--neutral-400)'
+                  : 'var(--text-primary)',
+              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+            }}
+          >
+            Next
+            <ChevronRight size={18} />
+          </button>
         </div>
       )}
     </div>
