@@ -129,6 +129,14 @@ Kebanyakan aplikasi taman terasa **kuno, berantakan, dan tidak intuitif**. Kami 
 - **Isolate & Analyze**: Gunakan filter bar tier-atas di riwayat Anda untuk melihat hanya tugas tertentu (mis. hanya tampilkan catatan Fertilizer)
 - **Horizontal Scroll UI**: Sistem chip yang responsif mobile untuk filtering cepat tanpa memakan ruang vertikal
 
+### ✏️ Edit Riwayat Aktivitas (Editable Timeline)
+
+- **Full Edit Capability**: Edit seluruh data aktivitas yang sudah tercatat - ubah tanggal, deskripsi, dosis, target tanaman, dan lainnya
+- **Photo Management**: Tambahkan foto baru atau hapus foto yang sudah ada dari aktivitas
+- **Real-time Update**: Perubahan langsung tersinkronisasi ke Firestore dan terlihat secara real-time
+- **Modal Interface**: Form edit yang elegan dalam modal popup untuk pengalaman editing yang fokus
+- **Smart Form**: Form edit beradaptasi berdasarkan jenis aktivitas (treatment vs non-treatment)
+
 ---
 
 ## 🛠️ Tech Stack Masterpiece
@@ -232,15 +240,16 @@ Setelah upload, ganti link placeholder dengan link asli:
 
 Berikut list screenshot yang perlu Anda ambil untuk melengkapi README:
 
-| No  | Halaman                     | Deskripsi                                   | Nama File               |
-| :-- | :-------------------------- | :------------------------------------------ | :---------------------- |
-| 1   | **Login Page**              | Tampilan halaman login dengan tombol Google | `login.png`             |
-| 2   | **Dashboard - Tab Catat**   | Form input aktivitas tanaman                | `dashboard-catat.png`   |
-| 3   | **Dashboard - Tab Riwayat** | Timeline aktivitas dengan filter            | `dashboard-riwayat.png` |
-| 4   | **Dashboard - Tab Tanaman** | Koleksi tanaman tersusun                    | `dashboard-tanaman.png` |
-| 5   | **Plant Form**              | Form tambah/edit tanaman                    | `plant-form.png`        |
-| 6   | **Mobile View**             | Tampilan responsive di HP                   | `mobile-view.png`       |
-| 7   | **Theme Selection**         | Contoh tema berbeda (Teal/Slate)            | `theme-example.png`     |
+| No  | Halaman                     | Deskripsi                                    | Nama File                  |
+| :-- | :-------------------------- | :------------------------------------------- | :------------------------- |
+| 1   | **Login Page**              | Tampilan halaman login dengan tombol Google  | `login.png`                |
+| 2   | **Dashboard - Tab Catat**   | Form input aktivitas tanaman                 | `dashboard-catat.png`      |
+| 3   | **Dashboard - Tab Riwayat** | Timeline aktivitas dengan filter             | `dashboard-riwayat.png`    |
+| 4   | **Dashboard - Tab Tanaman** | Koleksi tanaman tersusun                     | `dashboard-tanaman.png`    |
+| 5   | **Plant Form**              | Form tambah/edit tanaman                     | `plant-form.png`           |
+| 6   | **Activity Edit Form**      | Modal edit aktivitas dengan photo management | `activity-edit-form.png`   |
+| 7   | **Mobile View**             | Tampilan responsive di HP                    | `mobile-view.png`          |
+| 8   | **Theme Selection**         | Contoh tema berbeda (Teal/Slate)             | `theme-example.png`        |
 
 ---
 
@@ -251,12 +260,13 @@ KebunKU/
 ├── public/                      # Static assets (favicon, images)
 ├── src/
 │   ├── components/              # UI Components
-│   │   ├── ActivityForm.tsx    # Form untuk logging aktivitas tanaman
-│   │   ├── Layout.tsx          # Layout utama dengan sidebar & header
-│   │   ├── PlantForm.tsx       # Form CRUD tanaman
-│   │   ├── PlantManager.tsx    # Manager koleksi tanaman
-│   │   ├── ProtectedRoute.tsx  # Route yang memerlukan autentikasi
-│   │   └── Timeline.tsx        # Komponen timeline aktivitas
+│   │   ├── ActivityEditForm.tsx # Form edit aktivitas (editable timeline)
+│   │   ├── ActivityForm.tsx     # Form untuk logging aktivitas tanaman
+│   │   ├── Layout.tsx           # Layout utama dengan sidebar & header
+│   │   ├── PlantForm.tsx        # Form CRUD tanaman
+│   │   ├── PlantManager.tsx     # Manager koleksi tanaman
+│   │   ├── ProtectedRoute.tsx   # Route yang memerlukan autentikasi
+│   │   └── Timeline.tsx         # Komponen timeline aktivitas
 │   ├── contexts/               # React Contexts untuk Global State
 │   │   ├── ActivityContext.ts  # State management aktivitas
 │   │   ├── AuthContext.ts      # State management autentikasi
@@ -339,6 +349,7 @@ Buka [http://localhost:5173](http://localhost:5173) di browser Anda! 🎉
 
 | Status | Feature                          | Deskripsi                                     |
 | :----: | :------------------------------- | :-------------------------------------------- |
+|   ✅   | **Editable Timeline**            | Edit riwayat aktivitas dengan modal interface |
 |   🔮   | **Automated Watering Reminders** | Pengingat penyiraman otomatis berbasis jadwal |
 |   🤖   | **Plant Health AI Diagnosis**    | Diagnosis kesehatan tanaman menggunakan AI    |
 |   🌐   | **Social Garden Sharing**        | Bagikan taman Anda ke komunitas               |

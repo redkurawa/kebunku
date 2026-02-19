@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: KebunKU Documentation
+    url: https://github.com/redkurawa/kebunku#readme
+    about: Lihat dokumentasi proyek untuk informasi lebih lanjut.
+  - name: KebunKU Discussions
+    url: https://github.com/redkurawa/kebunku/discussions
+    about: Tanya jawab dan diskusi umum tentang KebunKU.

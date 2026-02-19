@@ -24,8 +24,11 @@ import {
   GitBranch,
   ChevronLeft,
   ChevronRight,
+  Pencil,
   type LucideIcon,
 } from 'lucide-react';
+import ActivityEditForm from './ActivityEditForm';
+import { type Activity } from '../services/activityService';
 
 const WEATHER_ICONS: Record<string, LucideIcon> = {
   cerah: Sun,
@@ -70,6 +73,7 @@ const Timeline: React.FC = () => {
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const ITEMS_PER_PAGE = 10;
 
   const filteredActivities = useMemo(() => {
@@ -321,11 +325,19 @@ const Timeline: React.FC = () => {
                     </span>
                   </div>
                   <button
+                    onClick={() => setEditingActivity(activity)}
+                    style={{ color: 'var(--primary-500)' }}
+                    title="Edit aktivitas"
+                  >
+                    <Pencil size={16} />
+                  </button>
+                  <button
                     onClick={() =>
                       confirm('Hapus aktivitas ini?') &&
                       deleteActivity(activity.id!)
                     }
                     style={{ color: 'var(--neutral-400)' }}
+                    title="Hapus aktivitas"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -534,6 +546,73 @@ const Timeline: React.FC = () => {
               objectFit: 'contain',
             }}
           />
+        </div>
+      )}
+
+      {/* Edit Activity Modal */}
+      {editingActivity && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '1rem',
+            overflow: 'auto',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setEditingActivity(null);
+            }
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 'var(--radius-lg)',
+              maxWidth: '800px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              padding: '2rem',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '1.5rem',
+              }}
+            >
+              <h2 style={{ margin: 0 }}>Edit Aktivitas</h2>
+              <button
+                onClick={() => setEditingActivity(null)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--neutral-500)',
+                }}
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <ActivityEditForm
+              activity={editingActivity}
+              onSuccess={() => {
+                setEditingActivity(null);
+              }}
+              onCancel={() => setEditingActivity(null)}
+            />
+          </div>
         </div>
       )}
 
