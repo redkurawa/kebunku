@@ -17,12 +17,8 @@ const PlantManager: React.FC = () => {
   const [editingPlant, setEditingPlant] = useState<Plant | undefined>(
     undefined
   );
-  const [expandedGroups, setExpandedGroups] = useState<string[]>([
-    'buah',
-    'bunga',
-    'carnivora',
-    'lainnya',
-  ]);
+  // Initial state: all collapsed (tertutup)
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
   const toggleGroup = (groupId: string) => {
     setExpandedGroups((prev) =>
@@ -47,7 +43,8 @@ const PlantManager: React.FC = () => {
     ) {
       try {
         await deletePlant(id);
-      } catch (error) {
+      } catch (err) {
+        console.error('Error deleting plant:', err);
         alert('Gagal menghapus tanaman');
       }
     }
@@ -58,6 +55,19 @@ const PlantManager: React.FC = () => {
     setEditingPlant(undefined);
   };
 
+  // Helper to display group name properly
+  const getGroupDisplayName = (groupId: string): string => {
+    const groupNames: Record<string, string> = {
+      sayur: 'Sayur',
+      buah: 'Buah',
+      hias: 'Hias',
+      carnivora: 'Carnivora',
+      lainnya: 'Lainnya',
+      bunga: 'Bunga',
+    };
+    return groupNames[groupId] || groupId;
+  };
+
   if (loading)
     return (
       <div className='card' style={{ textAlign: 'center', padding: '2rem' }}>
@@ -65,10 +75,51 @@ const PlantManager: React.FC = () => {
       </div>
     );
 
-  // Group plants by groupId
+  // Auto-map category to group based on keywords
+  const getAutoGroup = (categoryId: string, currentGroup: string): string => {
+    const cat = categoryId.toLowerCase();
+    // If already has a valid group, keep it
+    if (['sayur', 'buah', 'hias', 'carnivora'].includes(currentGroup)) {
+      return currentGroup;
+    }
+    // Auto-map based on category keywords
+    if (
+      cat.includes('kangkung') ||
+      cat.includes('cabe') ||
+      cat.includes('cabai') ||
+      cat.includes('bayam') ||
+      cat.includes('sawi') ||
+      cat.includes('selada') ||
+      cat.includes('tomat') ||
+      cat.includes('terong') ||
+      cat.includes('bawang') ||
+      cat.includes('wortel') ||
+      cat.includes('kol') ||
+      cat.includes('brokoli')
+    ) {
+      return 'sayur';
+    }
+    if (
+      cat.includes('mangga') ||
+      cat.includes('anggur') ||
+      cat.includes('jeruk') ||
+      cat.includes('apel') ||
+      cat.includes('pisang') ||
+      cat.includes('pepaya') ||
+      cat.includes('jambu') ||
+      cat.includes('durian') ||
+      cat.includes('rambutan')
+    ) {
+      return 'buah';
+    }
+    // Default to current group or 'lainnya'
+    return currentGroup || 'lainnya';
+  };
+
+  // Group plants by groupId with auto-mapping
   const groupedPlants = plants.reduce(
     (acc, plant) => {
-      const group = plant.groupId || 'lainnya';
+      const group = getAutoGroup(plant.categoryId, plant.groupId || 'lainnya');
       if (!acc[group]) acc[group] = [];
       acc[group].push(plant);
       return acc;
@@ -79,14 +130,14 @@ const PlantManager: React.FC = () => {
   return (
     <div className='plant-manager' style={{ width: '100%', maxWidth: '800px' }}>
       <div
-        className="plant-manager-header"
+        className='plant-manager-header'
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: '1.5rem',
           flexWrap: 'wrap',
-          gap: '1rem'
+          gap: '1rem',
         }}
       >
         <h2
@@ -95,7 +146,7 @@ const PlantManager: React.FC = () => {
             alignItems: 'center',
             gap: '0.5rem',
             color: 'var(--text-primary)',
-            margin: 0
+            margin: 0,
           }}
         >
           <Leaf className='text-secondary-600' /> Koleksi Tanaman
@@ -105,7 +156,7 @@ const PlantManager: React.FC = () => {
             onClick={() => setShowForm(true)}
             className='btn btn-primary'
             style={{
-              width: 'var(--btn-width, auto)'
+              width: 'var(--btn-width, auto)',
             }}
           >
             <Plus size={18} /> Tambah Tanaman
@@ -176,22 +227,27 @@ const PlantManager: React.FC = () => {
                       color: 'var(--text-primary)',
                     }}
                   >
-                    {groupId} ({items.length})
+                    {getGroupDisplayName(groupId)} ({items.length})
                   </h4>
                 </div>
               </div>
 
               {expandedGroups.includes(groupId) && (
-                <div className="plant-card-list">
+                <div className='plant-card-list'>
                   {items.map((plant) => (
-                    <div key={plant.id} className="plant-item-card">
-                      <div className="plant-info">
-                        <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                    <div key={plant.id} className='plant-item-card'>
+                      <div className='plant-info'>
+                        <div
+                          style={{
+                            fontWeight: 600,
+                            color: 'var(--text-primary)',
+                          }}
+                        >
                           {plant.categoryId} - {plant.variety}
                         </div>
-                        <div className="plant-meta">
+                        <div className='plant-meta'>
                           {plant.name && <span>🏷️ {plant.name}</span>}
-                          <span>🌱 {plant.groupId}</span>
+                          <span>🌱 {getGroupDisplayName(plant.groupId)}</span>
                         </div>
                       </div>
                       <div
@@ -206,7 +262,7 @@ const PlantManager: React.FC = () => {
                             padding: '0.5rem',
                             color: 'var(--secondary-600)',
                             backgroundColor: 'var(--secondary-50)',
-                            borderRadius: 'var(--radius-md)'
+                            borderRadius: 'var(--radius-md)',
                           }}
                           title='Edit'
                         >
@@ -218,7 +274,7 @@ const PlantManager: React.FC = () => {
                             padding: '0.5rem',
                             color: 'var(--stone-400)',
                             backgroundColor: 'var(--stone-100)',
-                            borderRadius: 'var(--radius-md)'
+                            borderRadius: 'var(--radius-md)',
                           }}
                           title='Hapus'
                         >

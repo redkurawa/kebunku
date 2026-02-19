@@ -116,10 +116,10 @@ const PlantForm: React.FC<PlantFormProps> = ({ onCancel, initialData }) => {
             setFormData({ ...formData, groupId: e.target.value })
           }
         >
+          <option value='sayur'>Sayur</option>
           <option value='buah'>Buah</option>
-          <option value='bunga'>Bunga</option>
+          <option value='hias'>Hias</option>
           <option value='carnivora'>Carnivora</option>
-          <option value='lainnya'>Lainnya</option>
         </select>
       </div>
 

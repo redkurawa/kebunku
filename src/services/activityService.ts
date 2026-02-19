@@ -1,6 +1,7 @@
 import {
   collection,
   addDoc,
+  updateDoc,
   deleteDoc,
   doc,
   query,
@@ -21,6 +22,7 @@ export type ActivityType =
   | 'hama_penyakit'
   | 'panen_lainnya'
   | 'pisah_anakan'
+  | 'pindah_pot'
   | 'lainnya';
 
 export type WeatherCondition =
@@ -155,6 +157,30 @@ export const activityService = {
       await deleteDoc(docRef);
     } catch (error) {
       console.error('Error deleting activity:', error);
+      throw error;
+    }
+  },
+
+  updateActivity: async (id: string, activity: Partial<Activity>) => {
+    try {
+      const cleanedActivity: Partial<Activity> = { ...activity };
+      if (activity.description !== undefined)
+        cleanedActivity.description = activity.description.trim();
+      if (activity.productName !== undefined)
+        cleanedActivity.productName = activity.productName.trim();
+      if (activity.dosis !== undefined)
+        cleanedActivity.dosis = activity.dosis.trim();
+      if (activity.volume !== undefined)
+        cleanedActivity.volume = activity.volume.trim();
+      if (activity.method !== undefined)
+        cleanedActivity.method = activity.method.trim();
+      if (activity.targetValue !== undefined)
+        cleanedActivity.targetValue = activity.targetValue.trim();
+
+      const docRef = doc(db, COLLECTION_NAME, id);
+      await updateDoc(docRef, cleanedActivity);
+    } catch (error) {
+      console.error('Error updating activity:', error);
       throw error;
     }
   },
