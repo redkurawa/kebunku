@@ -168,7 +168,7 @@ const PlantManager: React.FC = () => {
     return currentGroup || 'lainnya';
   };
 
-  // Group plants by groupId with auto-mapping
+  // Group plants by groupId with auto-mapping, then sort each group
   const groupedPlants = plants.reduce(
     (acc, plant) => {
       const group = getAutoGroup(plant.categoryId, plant.groupId || 'lainnya');
@@ -178,6 +178,15 @@ const PlantManager: React.FC = () => {
     },
     {} as Record<string, typeof plants>
   );
+
+  // Sort plants within each group alphabetically by categoryId + variety
+  Object.keys(groupedPlants).forEach((group) => {
+    groupedPlants[group].sort((a, b) => {
+      const aKey = `${a.categoryId || ''} - ${a.variety || ''}`.toLowerCase();
+      const bKey = `${b.categoryId || ''} - ${b.variety || ''}`.toLowerCase();
+      return aKey.localeCompare(bKey);
+    });
+  });
 
   return (
     <div className='plant-manager' style={{ width: '100%', maxWidth: '800px' }}>
