@@ -327,7 +327,7 @@ const Timeline: React.FC = () => {
                   <button
                     onClick={() => setEditingActivity(activity)}
                     style={{ color: 'var(--primary-500)' }}
-                    title="Edit aktivitas"
+                    title='Edit aktivitas'
                   >
                     <Pencil size={16} />
                   </button>
@@ -337,7 +337,7 @@ const Timeline: React.FC = () => {
                       deleteActivity(activity.id!)
                     }
                     style={{ color: 'var(--neutral-400)' }}
-                    title="Hapus aktivitas"
+                    title='Hapus aktivitas'
                   >
                     <Trash2 size={16} />
                   </button>
@@ -368,9 +368,16 @@ const Timeline: React.FC = () => {
                   </div>
                 )}
                 {activity.description && (
-                  <p style={{ marginBottom: '0.5rem' }}>
-                    {activity.description}
-                  </p>
+                  <div
+                    style={{
+                      marginBottom: '0.5rem',
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-word',
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: activity.description.replace(/\r?\n/g, '<br/>'),
+                    }}
+                  />
                 )}
 
                 {(activity.photoUrls?.length || activity.photoUrl) && (
