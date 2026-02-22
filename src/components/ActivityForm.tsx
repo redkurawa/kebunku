@@ -98,6 +98,7 @@ const ActivityForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [plantSearch, setPlantSearch] = useState('');
 
   type TargetScope = 'variety' | 'category' | 'group';
 
@@ -138,6 +139,60 @@ const ActivityForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
     });
     return Array.from(unique.values()).sort((a, b) => a.localeCompare(b));
   }, [plants]);
+
+  // Sort plants by categoryId first, then by variety
+  const sortedPlants = useMemo(() => {
+    return [...plants].sort((a, b) => {
+      const catA = (a.categoryId || '').toLowerCase();
+      const catB = (b.categoryId || '').toLowerCase();
+      if (catA < catB) return -1;
+      if (catA > catB) return 1;
+      // If same category, sort by variety
+      const varA = (a.variety || '').toLowerCase();
+      const varB = (b.variety || '').toLowerCase();
+      return varA.localeCompare(varB);
+    });
+  }, [plants]);
+
+  // Filter and group plants by category for dropdown
+  const groupedPlants: [string, typeof plants][] = useMemo(() => {
+    const search = plantSearch.toLowerCase().trim();
+    const filtered = sortedPlants.filter((plant) => {
+      if (!search) return true;
+      const categoryMatch = (plant.categoryId || '')
+        .toLowerCase()
+        .includes(search);
+      const varietyMatch = (plant.variety || '').toLowerCase().includes(search);
+      const nameMatch = (plant.name || '').toLowerCase().includes(search);
+      return categoryMatch || varietyMatch || nameMatch;
+    });
+
+    // Group by first word of category (case-insensitive)
+    // This handles cases where variety is stored in categoryId (e.g., "Drosera Spatulata" -> group by "Drosera")
+    const groups: Record<string, { display: string; plants: typeof plants }> =
+      {};
+    filtered.forEach((plant) => {
+      const catRaw = plant.categoryId || 'Unknown';
+      // Use first word (up to first space) as the group key for better grouping
+      const catKey = catRaw.toLowerCase().split(' ')[0];
+      if (!groups[catKey]) {
+        // Capitalize first letter for display
+        groups[catKey] = {
+          display: catKey.charAt(0).toUpperCase() + catKey.slice(1),
+          plants: [],
+        };
+      }
+      groups[catKey].plants.push(plant);
+    });
+
+    // Sort and convert to array format
+    return Object.entries(groups)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(
+        ([_key, value]) =>
+          [value.display, value.plants] as [string, typeof plants]
+      );
+  }, [sortedPlants, plantSearch]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -342,25 +397,66 @@ const ActivityForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
                 : 'Kelompok'}
           </label>
           {formData.targetScope === 'variety' ? (
-            <select
-              value={formData.plantId}
-              onChange={(e) => {
-                const selected = e.target.selectedOptions[0];
-                setFormData({
-                  ...formData,
-                  plantId: e.target.value,
-                  targetValue: selected ? selected.text : '',
-                });
-              }}
-              required
-            >
-              <option value=''>-- Pilih Tanaman --</option>
-              {plants.map((plant) => (
-                <option key={plant.id} value={plant.id}>
-                  {plant.categoryId} - {plant.variety} ({plant.name})
+            <>
+              <input
+                type='text'
+                placeholder='Cari tanaman...'
+                value={plantSearch}
+                onChange={(e) => setPlantSearch(e.target.value)}
+                style={{
+                  marginBottom: '0.5rem',
+                  padding: '0.5rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-md)',
+                  width: '100%',
+                  fontSize: '0.875rem',
+                }}
+              />
+              <select
+                value={formData.plantId || ''}
+                onChange={(e) => {
+                  const selectedPlantId = e.target.value;
+                  if (!selectedPlantId) {
+                    setFormData({
+                      ...formData,
+                      plantId: '',
+                      targetValue: '',
+                    });
+                    return;
+                  }
+                  // Find the selected plant to get its display text
+                  const selectedPlant = plants.find(
+                    (p) => p.id === selectedPlantId
+                  );
+                  setFormData({
+                    ...formData,
+                    plantId: selectedPlantId,
+                    targetValue: selectedPlant
+                      ? `${selectedPlant.categoryId} - ${selectedPlant.variety} (${selectedPlant.name})`
+                      : '',
+                  });
+                }}
+                required
+              >
+                <option value=''>
+                  {plantSearch && groupedPlants.length > 0
+                    ? `-- Pilih dari ${groupedPlants.reduce(
+                        (acc, [, pl]) => acc + pl.length,
+                        0
+                      )} hasil --`
+                    : '-- Pilih Tanaman --'}
                 </option>
-              ))}
-            </select>
+                {groupedPlants.map(([category, plantsInCategory]) => (
+                  <optgroup key={category} label={category}>
+                    {plantsInCategory.map((plant) => (
+                      <option key={plant.id} value={plant.id}>
+                        {plant.variety} ({plant.name})
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </>
           ) : (
             <select
               value={formData.targetValue}
