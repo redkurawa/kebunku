@@ -484,11 +484,11 @@ textarea {
 
 .plant-item-card {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--stone-50);
   transition: var(--transition);
+  min-height: 50px;
 }
 
 .plant-item-card:last-child {
@@ -503,6 +503,7 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  justify-content: center;
 }
 
 .plant-meta {

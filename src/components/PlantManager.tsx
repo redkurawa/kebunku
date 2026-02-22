@@ -12,13 +12,18 @@ import {
 import { type Plant } from '../services/plantService';
 
 const PlantManager: React.FC = () => {
-  const { plants, loading, deletePlant } = usePlants();
+  const { plants, loading, deletePlant, updatePlant } = usePlants();
   const [showForm, setShowForm] = useState(false);
   const [editingPlant, setEditingPlant] = useState<Plant | undefined>(
     undefined
   );
   // Initial state: all collapsed (tertutup)
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
+  // For batch update
+  const [selectedPlants, setSelectedPlants] = useState<Set<string>>(new Set());
+  const [showBatchUpdate, setShowBatchUpdate] = useState(false);
+  const [newCategory, setNewCategory] = useState('');
+  const [batchLoading, setBatchLoading] = useState(false);
 
   const toggleGroup = (groupId: string) => {
     setExpandedGroups((prev) =>
@@ -26,6 +31,53 @@ const PlantManager: React.FC = () => {
         ? prev.filter((g) => g !== groupId)
         : [...prev, groupId]
     );
+  };
+
+  const toggleSelectPlant = (plantId: string) => {
+    setSelectedPlants((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(plantId)) {
+        newSet.delete(plantId);
+      } else {
+        newSet.add(plantId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleBatchUpdate = async () => {
+    if (!newCategory.trim() || selectedPlants.size === 0) return;
+
+    if (
+      !confirm(
+        `Ubah kategori ${selectedPlants.size} tanaman menjadi "${newCategory}"?`
+      )
+    ) {
+      return;
+    }
+
+    setBatchLoading(true);
+    try {
+      // Normalize the category like we do in the service
+      const normalizedCategory = newCategory.trim().split(' ')[0];
+      const capitalized =
+        normalizedCategory.charAt(0).toUpperCase() +
+        normalizedCategory.slice(1).toLowerCase();
+
+      for (const plantId of selectedPlants) {
+        await updatePlant(plantId, { categoryId: capitalized });
+      }
+
+      alert(`Berhasil mengubah ${selectedPlants.size} tanaman`);
+      setSelectedPlants(new Set());
+      setShowBatchUpdate(false);
+      setNewCategory('');
+    } catch (err) {
+      console.error('Error batch updating:', err);
+      alert('Gagal mengubah kategori');
+    } finally {
+      setBatchLoading(false);
+    }
   };
 
   const handleEdit = (plant: Plant) => {
@@ -152,15 +204,26 @@ const PlantManager: React.FC = () => {
           <Leaf className='text-secondary-600' /> Koleksi Tanaman
         </h2>
         {!showForm && (
-          <button
-            onClick={() => setShowForm(true)}
-            className='btn btn-primary'
-            style={{
-              width: 'var(--btn-width, auto)',
-            }}
-          >
-            <Plus size={18} /> Tambah Tanaman
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            {selectedPlants.size > 0 && (
+              <button
+                onClick={() => setShowBatchUpdate(true)}
+                className='btn btn-secondary'
+                style={{ backgroundColor: 'var(--secondary-600)' }}
+              >
+                Ubah Kategori ({selectedPlants.size})
+              </button>
+            )}
+            <button
+              onClick={() => setShowForm(true)}
+              className='btn btn-primary'
+              style={{
+                width: 'var(--btn-width, auto)',
+              }}
+            >
+              <Plus size={18} /> Tambah Tanaman
+            </button>
+          </div>
         )}
         <style>{`
           @media (max-width: 767px) {
@@ -177,6 +240,63 @@ const PlantManager: React.FC = () => {
 
       {showForm && (
         <PlantForm onCancel={handleFormCancel} initialData={editingPlant} />
+      )}
+
+      {showBatchUpdate && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+          onClick={() => setShowBatchUpdate(false)}
+        >
+          <div
+            className='card'
+            style={{ padding: '2rem', maxWidth: '400px', width: '90%' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{ marginBottom: '1rem' }}>
+              Ubah Kategori ({selectedPlants.size} tanaman)
+            </h3>
+            <div className='input-group'>
+              <label>Kategori Baru</label>
+              <input
+                type='text'
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                placeholder='Contoh: Pinguicula'
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+              <button
+                onClick={handleBatchUpdate}
+                className='btn btn-primary'
+                disabled={batchLoading || !newCategory.trim()}
+                style={{ flex: 1 }}
+              >
+                {batchLoading ? 'Menyimpan...' : 'Simpan'}
+              </button>
+              <button
+                onClick={() => {
+                  setShowBatchUpdate(false);
+                  setNewCategory('');
+                }}
+                className='btn'
+                style={{ backgroundColor: 'var(--neutral-200)' }}
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       <div
@@ -236,18 +356,33 @@ const PlantManager: React.FC = () => {
                 <div className='plant-card-list'>
                   {items.map((plant) => (
                     <div key={plant.id} className='plant-item-card'>
-                      <div className='plant-info'>
-                        <div
-                          style={{
-                            fontWeight: 600,
-                            color: 'var(--text-primary)',
-                          }}
-                        >
-                          {plant.categoryId} - {plant.variety}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          flex: 1,
+                        }}
+                      >
+                        <div style={{ width: '30px', flexShrink: 0 }}>
+                          <input
+                            type='checkbox'
+                            checked={selectedPlants.has(plant.id!)}
+                            onChange={() => toggleSelectPlant(plant.id!)}
+                          />
                         </div>
-                        <div className='plant-meta'>
-                          {plant.name && <span>🏷️ {plant.name}</span>}
-                          <span>🌱 {getGroupDisplayName(plant.groupId)}</span>
+                        <div className='plant-info'>
+                          <div
+                            style={{
+                              fontWeight: 600,
+                              color: 'var(--text-primary)',
+                            }}
+                          >
+                            {plant.categoryId} - {plant.variety}
+                          </div>
+                          <div className='plant-meta'>
+                            {plant.name && <span>🏷️ {plant.name}</span>}
+                            <span>🌱 {getGroupDisplayName(plant.groupId)}</span>
+                          </div>
                         </div>
                       </div>
                       <div
