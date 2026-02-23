@@ -1,0 +1,45 @@
+# Robots.txt for KebunKU
+# https://kebunqu.vercel.app
+
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /features
+Allow: /privacy
+Allow: /terms
+
+# Disallow authenticated routes
+Disallow: /dashboard
+Disallow: /plants
+Disallow: /harvests
+Disallow: /activities
+Disallow: /profile
+Disallow: /settings
+
+# Sitemap location
+Sitemap: https://kebunqu.vercel.app/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Google specific
+User-agent: Googlebot
+Allow: /
+Allow: /about
+Allow: /features
+
+# Bing specific
+User-agent: Bingbot
+Allow: /
+Allow: /about
+Allow: /features
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
