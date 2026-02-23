@@ -17,7 +17,7 @@ const defaultSEO: SEOConfig = {
   title: 'KebunKU - Digital Garden Diary',
   description: 'Track your garden journey, monitor plants, and log harvests with KebunKU - your personal digital garden companion.',
   canonicalUrl: 'https://kebunqu.vercel.app',
-  ogImage: 'https://kebunqu.vercel.app/api/og',
+  ogImage: 'https://kebunqu.vercel.app/og-image.png',
   type: 'website',
   keywords: ['garden', 'plants', 'harvest', 'agriculture', 'gardening', 'farm'],
   author: 'KebunKU Team',

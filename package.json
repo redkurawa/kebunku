@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "generate:og": "node scripts/generate-og-image.js",
+    "prebuild": "npm run generate:og",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -11,6 +13,7 @@
   },
   "dependencies": {
     "@vercel/og": "^0.8.6",
+    "canvas": "^3.2.1",
     "date-fns": "^4.1.0",
     "firebase": "^12.9.0",
     "lucide-react": "^0.564.0",
