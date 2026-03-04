@@ -251,10 +251,12 @@ const Timeline: React.FC = () => {
           return (
             <div
               key={activity.id}
-              className='card'
+              className='card timeline-card'
               style={{ padding: '1.5rem' }}
             >
+              {/* Desktop Layout */}
               <div
+                className='timeline-header-desktop'
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -344,11 +346,113 @@ const Timeline: React.FC = () => {
                 </div>
               </div>
 
+              {/* Mobile Layout */}
               <div
+                className='timeline-header-mobile'
+                style={{
+                  display: 'none',
+                  marginBottom: '0.75rem',
+                }}
+              >
+                {/* Baris 1: Icon + Judul */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.75rem',
+                    marginBottom: '0.5rem',
+                  }}
+                >
+                  <div
+                    style={{
+                      backgroundColor:
+                        activity.targetScope === 'variety'
+                          ? 'var(--primary-100)'
+                          : 'var(--secondary-100)',
+                      color:
+                        activity.targetScope === 'variety'
+                          ? 'var(--primary-700)'
+                          : 'var(--secondary-700)',
+                      padding: '0.5rem',
+                      borderRadius: 'var(--radius-md)',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {activity.targetScope === 'variety' ? (
+                      <Icon size={20} />
+                    ) : (
+                      <Layers size={20} />
+                    )}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ textTransform: 'capitalize', margin: 0 }}>
+                      {activity.type === 'new_comer'
+                        ? 'tanaman baru'
+                        : activity.type.replace('_', ' ')}
+                      : {targetLabel}
+                    </h4>
+                    <p
+                      style={{
+                        fontSize: '0.8125rem',
+                        color: 'var(--neutral-500)',
+                        margin: '0.25rem 0 0 0',
+                      }}
+                    >
+                      {dateStr}
+                    </p>
+                  </div>
+                </div>
+                {/* Baris 2: Cuaca + Icon Edit/Hapus */}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    marginTop: '0.5rem',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      color: 'var(--neutral-500)',
+                      fontSize: '0.8125rem',
+                    }}
+                  >
+                    {activity.condition && <WeatherIcon size={16} />}
+                    <span style={{ textTransform: 'capitalize' }}>
+                      {activity.condition
+                        ? activity.condition.replace('_', ' ')
+                        : '-'}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setEditingActivity(activity)}
+                    style={{ color: 'var(--primary-500)', padding: '0.25rem' }}
+                    title='Edit aktivitas'
+                  >
+                    <Pencil size={16} />
+                  </button>
+                  <button
+                    onClick={() =>
+                      confirm('Hapus aktivitas ini?') &&
+                      deleteActivity(activity.id!)
+                    }
+                    style={{ color: 'var(--neutral-400)', padding: '0.25rem' }}
+                    title='Hapus aktivitas'
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+
+              <div
+                className='timeline-content'
                 style={{
                   fontSize: '0.9375rem',
                   color: 'var(--neutral-700)',
-                  marginLeft: '3.25rem',
                 }}
               >
                 {activity.productName && (

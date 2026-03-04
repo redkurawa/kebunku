@@ -395,6 +395,36 @@ textarea {
     width: 100%;
     justify-content: center;
   }
+
+  /* Timeline mobile layout */
+  .timeline-card .timeline-header-desktop {
+    display: none !important;
+  }
+
+  .timeline-card .timeline-header-mobile {
+    display: block !important;
+  }
+}
+
+/* Timeline desktop layout (default) */
+.timeline-card .timeline-header-desktop {
+  display: flex;
+}
+
+.timeline-card .timeline-header-mobile {
+  display: none;
+}
+
+/* Timeline content margin */
+.timeline-card .timeline-content {
+  margin-left: 3.25rem;
+}
+
+/* Mobile: content mepet kiri */
+@media (max-width: 575.98px) {
+  .timeline-card .timeline-content {
+    margin-left: 0;
+  }
 }
 
 /* ==========================================================================
