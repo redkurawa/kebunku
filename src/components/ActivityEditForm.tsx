@@ -113,17 +113,22 @@ const ActivityEditForm: React.FC<ActivityEditFormProps> = ({
 
   type TargetScope = 'variety' | 'category' | 'group';
 
-  // Parse existing date from activity
+  // Helper function to get local date in YYYY-MM-DD format
+  const getLocalDateString = (date: Date = new Date()): string => {
+    const offset = date.getTimezoneOffset() * 60000;
+    const localDate = new Date(date.getTime() - offset);
+    return localDate.toISOString().split('T')[0];
+  };
   const getInitialDate = () => {
     try {
       if (activity.date && typeof activity.date.toDate === 'function') {
         const date = activity.date.toDate();
-        return date.toISOString().split('T')[0];
+        return getLocalDateString(date);
       }
     } catch (e) {
       console.error('Error parsing date:', e);
     }
-    return new Date().toISOString().split('T')[0];
+    return getLocalDateString();
   };
 
   const [formData, setFormData] = useState({

@@ -102,13 +102,20 @@ const ActivityForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
 
   type TargetScope = 'variety' | 'category' | 'group';
 
+  // Helper function to get local date in YYYY-MM-DD format
+  const getLocalDateString = (date: Date = new Date()): string => {
+    const offset = date.getTimezoneOffset() * 60000;
+    const localDate = new Date(date.getTime() - offset);
+    return localDate.toISOString().split('T')[0];
+  };
+
   const [formData, setFormData] = useState({
     targetScope: 'variety' as TargetScope,
     targetValue: '',
     plantId: '',
     type: 'pupuk' as ActivityType,
     productName: '',
-    date: new Date().toISOString().split('T')[0],
+    date: getLocalDateString(),
     description: '',
     dosis: '',
     volume: '',
