@@ -25,9 +25,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Pencil,
+  ArrowUpDown,
+  RotateCcw,
   type LucideIcon,
 } from 'lucide-react';
 import ActivityEditForm from './ActivityEditForm';
+import PlantSelect from './PlantSelect';
 import { type Activity } from '../services/activityService';
 
 const WEATHER_ICONS: Record<string, LucideIcon> = {
@@ -74,17 +77,99 @@ const Timeline: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
+  const [filterType, setFilterType] = useState<'all' | 'group' | 'category' | 'plant'>('all');
+  const [filterValue, setFilterValue] = useState<string>('all');
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const ITEMS_PER_PAGE = 10;
 
+  const categoryOptions = useMemo(() => {
+    const categories = [...new Set(plants.map(p => p.categoryId).filter(Boolean))].sort();
+    return categories;
+  }, [plants]);
+
+  const GROUP_OPTIONS = [
+    { value: 'hias', label: 'Hias' },
+    { value: 'sayur', label: 'Sayur' },
+    { value: 'buah', label: 'Buah' },
+    { value: 'carnivora', label: 'Carnivora' },
+  ];
+
+  const handleFilterTypeChange = (newType: 'all' | 'group' | 'category' | 'plant') => {
+    setFilterType(newType);
+    setFilterValue('all');
+  };
+
   const filteredActivities = useMemo(() => {
-    if (activeFilter === 'all') return activities;
-    return activities.filter((a) => a.type === activeFilter);
-  }, [activities, activeFilter]);
+    let result = [...activities];
+    
+    if (activeFilter !== 'all') {
+      result = result.filter((a) => a.type === activeFilter);
+    }
+    
+    if (filterType !== 'all' && filterValue !== 'all') {
+      if (filterType === 'plant') {
+        result = result.filter((a) => {
+          if (a.targetScope === 'variety') {
+            return a.plantId === filterValue;
+          }
+          if (a.targetScope === 'category') {
+            return a.targetValue === filterValue;
+          }
+          return false;
+        });
+      } else if (filterType === 'category') {
+        result = result.filter((a) => {
+          if (a.targetScope === 'category') {
+            return a.targetValue === filterValue;
+          }
+          if (a.targetScope === 'variety') {
+            const plant = plants.find(p => p.id === a.plantId);
+            return plant?.categoryId === filterValue;
+          }
+          return false;
+        });
+      } else if (filterType === 'group') {
+        result = result.filter((a) => {
+          if (a.targetScope === 'group') {
+            return a.targetValue === filterValue;
+          }
+          if (a.targetScope === 'variety') {
+            const plant = plants.find(p => p.id === a.plantId);
+            return plant?.groupId === filterValue;
+          }
+          return false;
+        });
+      }
+    }
+    
+    result.sort((a, b) => {
+      const getMillis = (dateObj: any) => {
+        if (dateObj && typeof dateObj.toMillis === 'function')
+          return dateObj.toMillis();
+        if (dateObj instanceof Date) return dateObj.getTime();
+        if (typeof dateObj === 'string')
+          return new Date(dateObj).getTime();
+        return 0;
+      };
+      const diff = getMillis(b.date) - getMillis(a.date);
+      return sortOrder === 'desc' ? diff : -diff;
+    });
+    
+    return result;
+  }, [activities, activeFilter, filterType, filterValue, sortOrder, plants]);
+
+  const resetFilters = () => {
+    setFilterType('all');
+    setFilterValue('all');
+    setSortOrder('desc');
+  };
+
+  const hasActiveFilters = filterType !== 'all' || filterValue !== 'all' || sortOrder !== 'desc';
 
   // Reset page when filter changes
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [activeFilter]);
+  }, [activeFilter, filterType, filterValue, sortOrder]);
 
   // Pagination
   const totalPages = Math.ceil(filteredActivities.length / ITEMS_PER_PAGE);
@@ -208,6 +293,109 @@ const Timeline: React.FC = () => {
             </button>
           );
         })}
+      </div>
+
+{/* Filter Bar Row 2 - Cascading Dropdown */}
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+          alignItems: 'center',
+          padding: '0.75rem',
+          backgroundColor: 'var(--neutral-50)',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--border-color)',
+        }}
+      >
+        <select
+          value={filterType}
+          onChange={(e) => handleFilterTypeChange(e.target.value as 'all' | 'group' | 'category' | 'plant')}
+          style={{
+            padding: '0.4rem 0.6rem',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-color)',
+            fontSize: '0.8125rem',
+            backgroundColor: 'white',
+            minWidth: '140px',
+          }}
+        >
+          <option value='all'>Semua</option>
+          <option value='group'>Kelompok</option>
+          <option value='category'>Kategori</option>
+          <option value='plant'>Tanaman</option>
+        </select>
+
+        {filterType !== 'all' && (
+          filterType === 'plant' ? (
+            <PlantSelect
+              plants={plants}
+              value={filterValue}
+              onChange={setFilterValue}
+              placeholder="Pilih Tanaman"
+            />
+          ) : (
+            <select
+              value={filterValue}
+              onChange={(e) => setFilterValue(e.target.value)}
+              style={{
+                padding: '0.4rem 0.6rem',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--border-color)',
+                fontSize: '0.8125rem',
+                backgroundColor: 'white',
+                minWidth: '140px',
+              }}
+            >
+              <option value='all'>Pilih {filterType === 'group' ? 'Kelompok' : 'Kategori'}</option>
+              {filterType === 'group' && GROUP_OPTIONS.map(g => (
+                <option key={g.value} value={g.value}>{g.label}</option>
+              ))}
+              {filterType === 'category' && categoryOptions.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          )
+        )}
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginLeft: 'auto' }}>
+          <ArrowUpDown size={14} style={{ color: 'var(--neutral-500)' }} />
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as 'desc' | 'asc')}
+            style={{
+              padding: '0.4rem 0.6rem',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-color)',
+              fontSize: '0.8125rem',
+              backgroundColor: 'white',
+            }}
+          >
+            <option value='desc'>Terbaru dulu</option>
+            <option value='asc'>Terlama dulu</option>
+          </select>
+        </div>
+
+        {hasActiveFilters && (
+          <button
+            onClick={resetFilters}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+              padding: '0.4rem 0.6rem',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-color)',
+              fontSize: '0.8125rem',
+              backgroundColor: 'white',
+              color: 'var(--neutral-600)',
+              cursor: 'pointer',
+            }}
+          >
+            <RotateCcw size={14} />
+            Reset
+</button>
+        )}
       </div>
 
       {filteredActivities.length === 0 ? (
