@@ -74,6 +74,45 @@ const Timeline: React.FC = () => {
   const { activities, deleteActivity, loading, error } = useActivities();
   const { plants } = usePlants();
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+  const [currentActivityId, setCurrentActivityId] = useState<string | null>(null);
+  const [imageIndex, setImageIndex] = useState<number>(0);
+
+  const getActivityImages = (activityId: string) => {
+    const activity = activities.find(a => a.id === activityId);
+    if (!activity) return [];
+    const images: { url: string; activityId: string }[] = [];
+    if (activity.photoUrls?.length) {
+      activity.photoUrls.forEach((url) => {
+        images.push({ url, activityId: activity.id! });
+      });
+    } else if (activity.photoUrl) {
+      images.push({ url: activity.photoUrl, activityId: activity.id! });
+    }
+    return images;
+  };
+
+  const currentImages = currentActivityId ? getActivityImages(currentActivityId) : [];
+
+  const handleNextImage = () => {
+    if (currentImages.length <= 1) return;
+    setImageIndex((prev) => (prev + 1) % currentImages.length);
+    setFullscreenImage(currentImages[(imageIndex + 1) % currentImages.length].url);
+  };
+
+  const handlePrevImage = () => {
+    if (currentImages.length <= 1) return;
+    setImageIndex((prev) => (prev - 1 + currentImages.length) % currentImages.length);
+    setFullscreenImage(currentImages[(imageIndex - 1 + currentImages.length) % currentImages.length].url);
+  };
+
+  const openImage = (url: string, activityId: string) => {
+    const images = getActivityImages(activityId);
+    const idx = images.findIndex((img) => img.url === url);
+    setCurrentActivityId(activityId);
+    setImageIndex(idx >= 0 ? idx : 0);
+    setFullscreenImage(url);
+  };
+
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
@@ -704,7 +743,7 @@ const Timeline: React.FC = () => {
                             cursor: 'pointer',
                             display: 'block',
                           }}
-                          onClick={() => setFullscreenImage(url)}
+                          onClick={() => openImage(url, activity.id!)}
                         />
                         <div
                           style={{
@@ -743,7 +782,7 @@ const Timeline: React.FC = () => {
                             cursor: 'pointer',
                             display: 'block',
                           }}
-                          onClick={() => setFullscreenImage(activity.photoUrl!)}
+                          onClick={() => openImage(activity.photoUrl!, activity.id!)}
                         />
                         <div
                           style={{
@@ -836,9 +875,79 @@ const Timeline: React.FC = () => {
           >
             <X size={32} />
           </button>
+
+          {currentImages.length > 1 && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePrevImage();
+                }}
+                style={{
+                  position: 'absolute',
+                  left: '1rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'white',
+                  background: 'rgba(0,0,0,0.5)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '48px',
+                  height: '48px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <ChevronLeft size={32} />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNextImage();
+                }}
+                style={{
+                  position: 'absolute',
+                  right: '1rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'white',
+                  background: 'rgba(0,0,0,0.5)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '48px',
+                  height: '48px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <ChevronRight size={32} />
+              </button>
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '1rem',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  color: 'white',
+                  fontSize: '0.875rem',
+                  background: 'rgba(0,0,0,0.5)',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '20px',
+                }}
+              >
+                {imageIndex + 1} / {currentImages.length}
+              </div>
+            </>
+          )}
+
           <img
             src={fullscreenImage}
             alt='Fullscreen'
+            onClick={(e) => e.stopPropagation()}
             style={{
               maxWidth: '100%',
               maxHeight: '100%',
