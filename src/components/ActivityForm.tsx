@@ -86,7 +86,7 @@ const WEATHER_CONDITIONS: { value: WeatherCondition; label: string }[] = [
   { value: 'mendung', label: 'Mendung' },
   { value: 'berawan', label: 'Berawan' },
   { value: 'hujan_gerimis', label: 'Hujan Gerimis' },
-  { value: 'hujan_deras', label: 'Hujan Beras' },
+  { value: 'hujan_deras', label: 'Hujan Deras' },
 ];
 
 const ActivityForm: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
